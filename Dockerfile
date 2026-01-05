@@ -33,12 +33,6 @@ RUN groupadd -g ${GID} ${USERNAME} \
  && echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME}
 
 # ------------------------------------------------------------
-# Enable QEMU binfmt (persistent)
-# ------------------------------------------------------------
-RUN update-binfmts --enable qemu-arm && update-binfmts --enable qemu-aarch64 && update-binfmts --enable qemu-riscv64
-# TODO this wont work 
-
-# ------------------------------------------------------------
 # Install Nix (single-user, daemonless)
 # ------------------------------------------------------------
 RUN mkdir -m 0755 /nix \
@@ -51,13 +45,16 @@ RUN curl -L https://nixos.org/nix/install | sh -s -- --no-daemon
 
 ENV PATH="/home/${USERNAME}/.nix-profile/bin:${PATH}"
 
+RUN nix-env -iA cachix -f https://cachix.org/api/v1/install
+
 # ------------------------------------------------------------
 # Install Rust (stable, user-local)
 # ------------------------------------------------------------
-RUN curl https://sh.rustup.rs -sSf \
-  | sh -s -- -y --profile minimal
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y 
 
 ENV PATH="/home/${USERNAME}/.cargo/bin:${PATH}"
+
+RUN rustup default stable
 
 # ------------------------------------------------------------
 # Sanity checks (fail build if broken)
