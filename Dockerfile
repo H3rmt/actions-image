@@ -20,8 +20,8 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     clang \
     lld \
-    qemu-user-static \
-    binfmt-support \
+    qemu-user \
+    qemu-user-binfmt \
     && rm -rf /var/lib/apt/lists/*
 
 # ------------------------------------------------------------
@@ -70,6 +70,3 @@ RUN nix --version \
 # Actions expect HOME to be writable
 ENV HOME=/home/${USERNAME}
 ENV USER=user
-
-COPY entry.sh /usr/local/bin/entry.sh
-ENTRYPOINT ["/usr/local/bin/entry.sh"]
