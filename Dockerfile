@@ -1,4 +1,4 @@
-FROM debian:trixie
+FROM debian:testing
 
 ARG USERNAME=user
 ARG UID=1001
@@ -54,7 +54,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 
 ENV PATH="/home/${USERNAME}/.cargo/bin:${PATH}"
 
-RUN rustup default stable && rustup target add x86_64-unknown-linux-gnu
+RUN rustup install stable && rustup target add x86_64-unknown-linux-gnu && rustup default stable
 
 # ------------------------------------------------------------
 # Sanity checks (fail build if broken)
