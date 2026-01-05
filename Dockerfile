@@ -1,8 +1,8 @@
 FROM debian:trixie
 
 ARG USERNAME=user
-ARG UID=1000
-ARG GID=1000
+ARG UID=1001
+ARG GID=1001
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV NIX_CONFIG="experimental-features = nix-command flakes"
@@ -35,9 +35,8 @@ RUN groupadd -g ${GID} ${USERNAME} \
 # ------------------------------------------------------------
 # Enable QEMU binfmt (persistent)
 # ------------------------------------------------------------
-RUN update-binfmts --enable qemu-arm \
- && update-binfmts --enable qemu-aarch64 \
- && update-binfmts --enable qemu-riscv64
+RUN update-binfmts --enable qemu-arm && update-binfmts --enable qemu-aarch64 && update-binfmts --enable qemu-riscv64
+# TODO this wont work 
 
 # ------------------------------------------------------------
 # Install Nix (single-user, daemonless)
@@ -73,3 +72,6 @@ RUN nix --version \
 # ------------------------------------------------------------
 # Actions expect HOME to be writable
 ENV HOME=/home/${USERNAME}
+
+COPY entry.sh /usr/local/bin/entry.sh
+ENTRYPOINT ["/usr/local/bin/entry.sh"]
